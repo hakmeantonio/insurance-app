@@ -8,6 +8,7 @@ import {
   Users,
   Shield,
   Globe,
+  ClipboardList,
 } from "lucide-react";
 import { type Screen, INTL_SCREENS } from "@/lib/types";
 
@@ -38,6 +39,13 @@ export function SidebarNav({ screens, isAdmin }: { screens: Screen[]; isAdmin: b
         <Link href="/dashboard/users" className={navLinkClass("/dashboard/users")}>
           <Users className="w-4 h-4 shrink-0" />
           User Management
+        </Link>
+      )}
+
+      {isAdmin && (
+        <Link href="/dashboard/audit" className={navLinkClass("/dashboard/audit")}>
+          <ClipboardList className="w-4 h-4 shrink-0" />
+          Audit Log
         </Link>
       )}
 
