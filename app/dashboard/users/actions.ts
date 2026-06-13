@@ -92,7 +92,8 @@ export async function deleteUser(userId: string) {
 }
 
 export async function getUserPermissions(userId: string) {
-  const supabase = await createClient();
+  // Use admin client so RLS doesn't block reading another user's rows
+  const supabase = createAdminClient();
 
   const [{ data: screens }, { data: permissions }, { data: intlPermissions }] =
     await Promise.all([

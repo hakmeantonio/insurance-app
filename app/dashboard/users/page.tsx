@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { InviteUserDialog } from "./_components/invite-user-dialog";
 import { EditRoleDialog } from "./_components/edit-role-dialog";
 import { PermissionsDialog } from "./_components/permissions-dialog";
+import { ViewPermissionsDialog } from "./_components/view-permissions-dialog";
 import { DeleteUserButton } from "./_components/delete-user-button";
 import { ResetPasswordDialog } from "./_components/reset-password-dialog";
 import type { AppUser } from "@/lib/types";
@@ -102,6 +103,7 @@ export default async function UsersPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-1">
+                      <ViewPermissionsDialog user={user} />
                       <EditRoleDialog user={user} />
                       <PermissionsDialog user={user} />
                       <ResetPasswordDialog user={user} />
