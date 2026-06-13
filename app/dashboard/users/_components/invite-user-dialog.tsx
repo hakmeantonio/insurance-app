@@ -19,12 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { inviteUser } from "../actions";
+import { createUser } from "../actions";
 import type { UserRole } from "@/lib/types";
 
 export function InviteUserDialog() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<UserRole>("employee");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -36,8 +37,9 @@ export function InviteUserDialog() {
 
     const fd = new FormData();
     fd.set("email", email);
+    fd.set("password", password);
     fd.set("role", role);
-    const result = await inviteUser(fd);
+    const result = await createUser(fd);
 
     setLoading(false);
     if (result.error) {
@@ -45,6 +47,7 @@ export function InviteUserDialog() {
     } else {
       setOpen(false);
       setEmail("");
+      setPassword("");
       setRole("employee");
     }
   }
@@ -53,13 +56,13 @@ export function InviteUserDialog() {
     <>
       <Button onClick={() => setOpen(true)}>
         <UserPlus className="w-4 h-4 mr-2" />
-        Invite User
+        Create User
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Invite New User</DialogTitle>
+            <DialogTitle>Create New User</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -70,9 +73,9 @@ export function InviteUserDialog() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="invite-email">Email address</Label>
+              <Label htmlFor="create-email">Email address</Label>
               <Input
-                id="invite-email"
+                id="create-email"
                 type="email"
                 placeholder="user@company.com"
                 value={email}
@@ -82,28 +85,38 @@ export function InviteUserDialog() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="invite-role">Role</Label>
+              <Label htmlFor="create-password">Password</Label>
+              <Input
+                id="create-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="create-role">Role</Label>
               <Select value={role} onValueChange={(v) => setRole(v as UserRole)}>
-                <SelectTrigger id="invite-role">
+                <SelectTrigger id="create-role">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="employee">Employee</SelectItem>
                   <SelectItem value="broker">Broker</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <DialogFooter className="pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Sending invite..." : "Send Invite"}
+                {loading ? "Creating..." : "Create User"}
               </Button>
             </DialogFooter>
           </form>

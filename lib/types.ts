@@ -1,4 +1,4 @@
-export type UserRole = "employee" | "broker";
+export type UserRole = "employee" | "broker" | "admin";
 export type PolicyStatus = "active" | "pending" | "expired" | "cancelled";
 
 export interface AppUser {

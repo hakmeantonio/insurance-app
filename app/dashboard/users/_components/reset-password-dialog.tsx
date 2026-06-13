@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
+import { KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,20 +10,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { updateUserRole } from "../actions";
-import type { AppUser, UserRole } from "@/lib/types";
+import { resetUserPassword } from "../actions";
+import type { AppUser } from "@/lib/types";
 
-export function EditRoleDialog({ user }: { user: AppUser }) {
+export function ResetPasswordDialog({ user }: { user: AppUser }) {
   const [open, setOpen] = useState(false);
-  const [role, setRole] = useState<UserRole>(user.role ?? "employee");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -31,25 +25,28 @@ export function EditRoleDialog({ user }: { user: AppUser }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const result = await updateUserRole(user.id, role);
+
+    const result = await resetUserPassword(user.id, password);
+
     setLoading(false);
     if (result.error) {
       setError(result.error);
     } else {
       setOpen(false);
+      setPassword("");
     }
   }
 
   return (
     <>
-      <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
-        <Pencil className="w-4 h-4" />
+      <Button variant="ghost" size="sm" onClick={() => setOpen(true)} title="Reset password">
+        <KeyRound className="w-4 h-4" />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>Edit Role</DialogTitle>
+            <DialogTitle>Reset Password</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4 py-2">
@@ -62,29 +59,24 @@ export function EditRoleDialog({ user }: { user: AppUser }) {
             <p className="text-sm text-gray-500">{user.email}</p>
 
             <div className="space-y-2">
-              <Label>Role</Label>
-              <Select value={role} onValueChange={(v) => setRole(v as UserRole)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="employee">Employee</SelectItem>
-                  <SelectItem value="broker">Broker</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="reset-password">New password</Label>
+              <Input
+                id="reset-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
             </div>
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={loading}>
-                {loading ? "Saving..." : "Save"}
+                {loading ? "Resetting..." : "Reset Password"}
               </Button>
             </DialogFooter>
           </form>

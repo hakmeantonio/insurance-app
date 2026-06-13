@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import type { Screen } from "@/lib/types";
 
-export function SidebarNav({ screens }: { screens: Screen[] }) {
+export function SidebarNav({ screens, isAdmin }: { screens: Screen[]; isAdmin: boolean }) {
   const pathname = usePathname();
 
   function isActive(href: string) {
@@ -34,10 +34,12 @@ export function SidebarNav({ screens }: { screens: Screen[] }) {
         Overview
       </Link>
 
-      <Link href="/dashboard/users" className={navLinkClass("/dashboard/users")}>
-        <Users className="w-4 h-4 shrink-0" />
-        User Management
-      </Link>
+      {isAdmin && (
+        <Link href="/dashboard/users" className={navLinkClass("/dashboard/users")}>
+          <Users className="w-4 h-4 shrink-0" />
+          User Management
+        </Link>
+      )}
 
       {screens.length > 0 && (
         <div className="pt-3">

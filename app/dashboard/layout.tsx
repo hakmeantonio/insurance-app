@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logout } from "@/app/(auth)/login/actions";
 import { LogOut } from "lucide-react";
 import { SidebarNav } from "./_components/sidebar-nav";
+import { ChangePasswordDialog } from "./_components/change-password-dialog";
 
 export default async function DashboardLayout({
   children,
@@ -16,10 +17,12 @@ export default async function DashboardLayout({
 
   if (!user) redirect("/login");
 
-  const { data: screens } = await supabase
-    .from("screens")
-    .select("id, name, description")
-    .order("name");
+  const [{ data: screens }, { data: profile }] = await Promise.all([
+    supabase.from("screens").select("id, name, description").order("name"),
+    supabase.from("profiles").select("role").eq("id", user.id).single(),
+  ]);
+
+  const isAdmin = profile?.role === "admin";
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -33,12 +36,13 @@ export default async function DashboardLayout({
           </div>
         </div>
 
-        <SidebarNav screens={screens ?? []} />
+        <SidebarNav screens={screens ?? []} isAdmin={isAdmin} />
 
         <div className="px-3 py-4 border-t border-gray-200">
           <div className="px-3 py-1 text-xs text-gray-500 truncate mb-1">
             {user.email}
           </div>
+          <ChangePasswordDialog />
           <form action={logout}>
             <button
               type="submit"

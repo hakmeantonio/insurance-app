@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -13,15 +14,25 @@ import { InviteUserDialog } from "./_components/invite-user-dialog";
 import { EditRoleDialog } from "./_components/edit-role-dialog";
 import { PermissionsDialog } from "./_components/permissions-dialog";
 import { DeleteUserButton } from "./_components/delete-user-button";
+import { ResetPasswordDialog } from "./_components/reset-password-dialog";
 import type { AppUser } from "@/lib/types";
 
 export default async function UsersPage() {
   const admin = createAdminClient();
   const supabase = await createClient();
 
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: currentProfile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user?.id)
+    .single();
+
+  if (currentProfile?.role !== "admin") redirect("/dashboard");
+
   const [{ data: authData }, { data: profiles }] = await Promise.all([
     admin.auth.admin.listUsers(),
-    supabase.from("profiles").select("id, role"),
+    admin.from("profiles").select("id, role"),
   ]);
 
   const profileMap = new Map(profiles?.map((p) => [p.id, p.role]) ?? []);
@@ -62,7 +73,7 @@ export default async function UsersPage() {
                   colSpan={4}
                   className="text-center py-12 text-gray-400"
                 >
-                  No users yet. Invite your first user above.
+                  No users yet. Create your first user above.
                 </TableCell>
               </TableRow>
             ) : (
@@ -73,7 +84,11 @@ export default async function UsersPage() {
                     {user.role ? (
                       <Badge
                         variant={
-                          user.role === "employee" ? "default" : "secondary"
+                          user.role === "admin"
+                            ? "destructive"
+                            : user.role === "employee"
+                            ? "default"
+                            : "secondary"
                         }
                       >
                         {user.role}
@@ -89,6 +104,7 @@ export default async function UsersPage() {
                     <div className="flex items-center justify-end gap-1">
                       <EditRoleDialog user={user} />
                       <PermissionsDialog user={user} />
+                      <ResetPasswordDialog user={user} />
                       <DeleteUserButton userId={user.id} email={user.email} />
                     </div>
                   </TableCell>
