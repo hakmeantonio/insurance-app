@@ -35,3 +35,25 @@ export interface Policy {
   notes: string | null;
   created_at: string;
 }
+
+export const INTL_SCREENS = {
+  "rl360": "RL360",
+  "omnilife": "Omnilife",
+  "friends-provident": "Friends Provident",
+  "expacare": "Expacare",
+  "claims": "Claims",
+} as const;
+
+export type IntlScreenSlug = keyof typeof INTL_SCREENS;
+
+export interface IntlPolicy {
+  id: string;
+  screen: IntlScreenSlug;
+  first_name: string;
+  last_name: string;
+  date_of_birth: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  policy_index: number;
+  created_at: string;
+}

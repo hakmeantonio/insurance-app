@@ -7,9 +7,9 @@ import {
   LayoutDashboard,
   Users,
   Shield,
-  ChevronRight,
+  Globe,
 } from "lucide-react";
-import type { Screen } from "@/lib/types";
+import { type Screen, INTL_SCREENS } from "@/lib/types";
 
 export function SidebarNav({ screens, isAdmin }: { screens: Screen[]; isAdmin: boolean }) {
   const pathname = usePathname();
@@ -57,6 +57,21 @@ export function SidebarNav({ screens, isAdmin }: { screens: Screen[]; isAdmin: b
           })}
         </div>
       )}
+
+      <div className="pt-3">
+        <p className="px-3 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          International Policies
+        </p>
+        {Object.entries(INTL_SCREENS).map(([slug, name]) => {
+          const href = `/dashboard/international/${slug}`;
+          return (
+            <Link key={slug} href={href} className={navLinkClass(href)}>
+              <Globe className="w-4 h-4 shrink-0" />
+              <span className="truncate">{name}</span>
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }
