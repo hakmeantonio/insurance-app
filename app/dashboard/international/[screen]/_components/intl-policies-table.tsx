@@ -1,6 +1,7 @@
 "use client";
 
-import { FolderOpen } from "lucide-react";
+import Link from "next/link";
+import { FolderOpen, Eye } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -46,14 +47,14 @@ export function IntlPoliciesTable({ policies, screen, canEdit }: Props) {
             <TableHead>Date of Birth</TableHead>
             <TableHead>Start</TableHead>
             <TableHead>End</TableHead>
-            {canEdit && <TableHead className="text-right">Actions</TableHead>}
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {policies.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={canEdit ? 7 : 6}
+                colSpan={7}
                 className="text-center py-12 text-gray-400"
               >
                 No policies yet. Add your first policy above.
@@ -97,18 +98,27 @@ export function IntlPoliciesTable({ policies, screen, canEdit }: Props) {
                   <TableCell className="text-sm text-gray-500">
                     {fmt(policy.end_date)}
                   </TableCell>
-                  {canEdit && (
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-1">
-                        <IntlPolicyFormDialog screen={screen} policy={policy} />
-                        <DeleteIntlPolicyButton
-                          policyId={policy.id}
-                          policyIndex={policy.policy_index}
-                          screen={screen}
-                        />
-                      </div>
-                    </TableCell>
-                  )}
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-1">
+                      <Link
+                        href={`/dashboard/international/${screen}/${policy.policy_index}`}
+                        className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                      >
+                        <Eye className="w-4 h-4" />
+                        View
+                      </Link>
+                      {canEdit && (
+                        <>
+                          <IntlPolicyFormDialog screen={screen} policy={policy} />
+                          <DeleteIntlPolicyButton
+                            policyId={policy.id}
+                            policyIndex={policy.policy_index}
+                            screen={screen}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
                 </TableRow>
               );
             })
