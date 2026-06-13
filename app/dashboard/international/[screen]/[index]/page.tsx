@@ -20,7 +20,7 @@ export default async function PolicyDocumentsPage({
 
   const supabase = await createClient();
 
-  const [{ data: policy }, { data: profile }] = await Promise.all([
+  const [{ data: policy }, { data: profile }, { data: permRow }] = await Promise.all([
     supabase
       .from("international_policies")
       .select("*")
@@ -32,11 +32,24 @@ export default async function PolicyDocumentsPage({
       .select("role")
       .eq("id", (await supabase.auth.getUser()).data.user!.id)
       .single(),
+    supabase
+      .from("intl_permissions")
+      .select("can_read, can_create, can_update, can_delete")
+      .eq("user_id", (await supabase.auth.getUser()).data.user!.id)
+      .eq("screen", slug)
+      .maybeSingle(),
   ]);
 
   if (!policy) notFound();
 
-  const canEdit = profile?.role === "admin" || profile?.role === "employee";
+  const isAdmin = profile?.role === "admin";
+  const perm = isAdmin
+    ? { can_read: true, can_create: true, can_update: true, can_delete: true }
+    : permRow ?? { can_read: false, can_create: false, can_update: false, can_delete: false };
+
+  if (!perm.can_read) notFound();
+
+  const canEdit = perm.can_create || perm.can_update || perm.can_delete;
   const screenName = INTL_SCREENS[slug];
   const intlPolicy = policy as IntlPolicy;
   const storagePath = `${slug}/${policyIndex}`;

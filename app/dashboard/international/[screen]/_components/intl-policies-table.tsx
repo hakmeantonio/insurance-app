@@ -24,9 +24,10 @@ interface Props {
   policies: IntlPolicy[];
   screen: IntlScreenSlug;
   canEdit: boolean;
+  perm: { can_create: boolean; can_update: boolean; can_delete: boolean };
 }
 
-export function IntlPoliciesTable({ policies, screen, canEdit }: Props) {
+export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
   const folderBase = process.env.NEXT_PUBLIC_INTL_FOLDER_BASE;
   const screenName = INTL_SCREENS[screen];
 
@@ -107,15 +108,15 @@ export function IntlPoliciesTable({ policies, screen, canEdit }: Props) {
                         <Eye className="w-4 h-4" />
                         View
                       </Link>
-                      {canEdit && (
-                        <>
-                          <IntlPolicyFormDialog screen={screen} policy={policy} />
-                          <DeleteIntlPolicyButton
-                            policyId={policy.id}
-                            policyIndex={policy.policy_index}
-                            screen={screen}
-                          />
-                        </>
+                      {perm.can_update && (
+                        <IntlPolicyFormDialog screen={screen} policy={policy} />
+                      )}
+                      {perm.can_delete && (
+                        <DeleteIntlPolicyButton
+                          policyId={policy.id}
+                          policyIndex={policy.policy_index}
+                          screen={screen}
+                        />
                       )}
                     </div>
                   </TableCell>

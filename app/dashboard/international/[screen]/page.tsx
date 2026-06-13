@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ShieldOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { INTL_SCREENS, type IntlScreenSlug, type IntlPolicy } from "@/lib/types";
 import { IntlPoliciesTable } from "./_components/intl-policies-table";
@@ -16,11 +17,35 @@ export default async function IntlScreenPage({
   const screenName = INTL_SCREENS[slug];
 
   const supabase = await createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", (await supabase.auth.getUser()).data.user!.id)
-    .single();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const [{ data: profile }, { data: permRow }] = await Promise.all([
+    supabase.from("profiles").select("role").eq("id", user!.id).single(),
+    supabase
+      .from("intl_permissions")
+      .select("can_read, can_create, can_update, can_delete")
+      .eq("user_id", user!.id)
+      .eq("screen", slug)
+      .maybeSingle(),
+  ]);
+
+  const isAdmin = profile?.role === "admin";
+
+  const perm = isAdmin
+    ? { can_read: true, can_create: true, can_update: true, can_delete: true }
+    : permRow ?? { can_read: false, can_create: false, can_update: false, can_delete: false };
+
+  if (!perm.can_read) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 text-center">
+        <ShieldOff className="w-12 h-12 text-gray-300 mb-4" />
+        <h2 className="text-lg font-semibold text-gray-700">Access Denied</h2>
+        <p className="text-gray-400 text-sm mt-1">
+          You don&apos;t have permission to view this screen. Contact an administrator.
+        </p>
+      </div>
+    );
+  }
 
   const { data: policies } = await supabase
     .from("international_policies")
@@ -29,7 +54,7 @@ export default async function IntlScreenPage({
     .order("policy_index", { ascending: true });
 
   const policyList = (policies ?? []) as IntlPolicy[];
-  const canEdit = profile?.role === "admin" || profile?.role === "employee";
+  const canEdit = perm.can_create || perm.can_update || perm.can_delete;
 
   const today = new Date();
   const in30 = new Date(today);
@@ -50,7 +75,7 @@ export default async function IntlScreenPage({
           </p>
           <h1 className="text-2xl font-semibold text-gray-900">{screenName}</h1>
         </div>
-        {canEdit && <IntlPolicyFormDialog screen={slug} />}
+        {perm.can_create && <IntlPolicyFormDialog screen={slug} />}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -64,7 +89,7 @@ export default async function IntlScreenPage({
         </div>
       </div>
 
-      <IntlPoliciesTable policies={policyList} screen={slug} canEdit={canEdit} />
+      <IntlPoliciesTable policies={policyList} screen={slug} canEdit={canEdit} perm={perm} />
     </div>
   );
 }

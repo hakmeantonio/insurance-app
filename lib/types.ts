@@ -57,3 +57,11 @@ export interface IntlPolicy {
   policy_index: number;
   created_at: string;
 }
+
+export interface IntlPermission {
+  screen: IntlScreenSlug;
+  can_read: boolean;
+  can_create: boolean;
+  can_update: boolean;
+  can_delete: boolean;
+}

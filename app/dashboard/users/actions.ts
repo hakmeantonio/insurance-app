@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import type { UserRole, UserPermission } from "@/lib/types";
+import type { UserRole, UserPermission, IntlPermission, IntlScreenSlug } from "@/lib/types";
+import { INTL_SCREENS } from "@/lib/types";
 
 async function requireAdmin(): Promise<string | null> {
   const supabase = await createClient();
@@ -93,15 +94,61 @@ export async function deleteUser(userId: string) {
 export async function getUserPermissions(userId: string) {
   const supabase = await createClient();
 
-  const [{ data: screens }, { data: permissions }] = await Promise.all([
-    supabase.from("screens").select("*").order("name"),
-    supabase
-      .from("permissions")
-      .select("screen_id, can_read, can_create, can_update, can_delete")
-      .eq("user_id", userId),
-  ]);
+  const [{ data: screens }, { data: permissions }, { data: intlPermissions }] =
+    await Promise.all([
+      supabase.from("screens").select("*").order("name"),
+      supabase
+        .from("permissions")
+        .select("screen_id, can_read, can_create, can_update, can_delete")
+        .eq("user_id", userId),
+      supabase
+        .from("intl_permissions")
+        .select("screen, can_read, can_create, can_update, can_delete")
+        .eq("user_id", userId),
+    ]);
 
-  return { screens: screens ?? [], permissions: permissions ?? [] };
+  return {
+    screens: screens ?? [],
+    permissions: permissions ?? [],
+    intlPermissions: intlPermissions ?? [],
+  };
+}
+
+export async function saveIntlPermissions(
+  userId: string,
+  permissions: IntlPermission[]
+) {
+  const authError = await requireAdmin();
+  if (authError) return { error: authError };
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from("intl_permissions").upsert(
+    permissions.map((p) => ({ user_id: userId, ...p })),
+    { onConflict: "user_id,screen" }
+  );
+
+  if (error) return { error: error.message };
+  revalidatePath("/dashboard/users");
+  return { error: null };
+}
+
+export async function getIntlPermission(
+  userId: string,
+  screen: IntlScreenSlug
+): Promise<IntlPermission> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("intl_permissions")
+    .select("can_read, can_create, can_update, can_delete")
+    .eq("user_id", userId)
+    .eq("screen", screen)
+    .single();
+
+  return (
+    data
+      ? { screen, ...data }
+      : { screen, can_read: false, can_create: false, can_update: false, can_delete: false }
+  );
 }
 
 export async function savePermissions(
