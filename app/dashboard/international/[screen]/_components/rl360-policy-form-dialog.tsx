@@ -209,8 +209,8 @@ export function RL360PolicyFormDialog({ policy }: Props) {
 
   function renderInput(id: keyof Fields, label: string, type = "text", required = false) {
     return (
-      <div key={id} className="space-y-1">
-        <Label htmlFor={id} className="text-xs font-medium text-gray-700">
+      <div key={id} className="space-y-1.5">
+        <Label htmlFor={id} className="text-sm font-medium text-gray-700">
           {label}{required && " *"}
         </Label>
         <Input
@@ -219,7 +219,7 @@ export function RL360PolicyFormDialog({ policy }: Props) {
           value={fields[id]}
           onChange={(e) => set(id, e.target.value)}
           required={required}
-          className="h-8 text-sm"
+          className="h-9"
         />
       </div>
     );
@@ -227,12 +227,12 @@ export function RL360PolicyFormDialog({ policy }: Props) {
 
   function renderSelect(id: keyof Fields, label: string, options: string[], required = false) {
     return (
-      <div key={id} className="space-y-1">
-        <Label htmlFor={id} className="text-xs font-medium text-gray-700">
+      <div key={id} className="space-y-1.5">
+        <Label htmlFor={id} className="text-sm font-medium text-gray-700">
           {label}{required && " *"}
         </Label>
         <Select value={fields[id]} onValueChange={(v) => set(id, v ?? "")}>
-          <SelectTrigger id={id} className="h-8 text-sm">
+          <SelectTrigger id={id} className="h-9 w-full">
             <SelectValue placeholder="Select…" />
           </SelectTrigger>
           <SelectContent>
@@ -244,6 +244,14 @@ export function RL360PolicyFormDialog({ policy }: Props) {
           </SelectContent>
         </Select>
       </div>
+    );
+  }
+
+  function sectionHeader(title: string) {
+    return (
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider pt-2 pb-1 border-b border-gray-100">
+        {title}
+      </p>
     );
   }
 
@@ -263,9 +271,9 @@ export function RL360PolicyFormDialog({ policy }: Props) {
       {trigger}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{isEdit ? "Edit RL360 Policy" : "New RL360 Policy"}</DialogTitle>
+            <DialogTitle className="text-xl">{isEdit ? "Edit RL360 Policy" : "New RL360 Policy"}</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="py-2">
@@ -275,8 +283,10 @@ export function RL360PolicyFormDialog({ policy }: Props) {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-              <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-x-10 gap-y-4">
+              {/* Left column */}
+              <div className="space-y-4">
+                {sectionHeader("Personal Details")}
                 {renderSelect("salutation", "Salutation", SALUTATIONS)}
                 {renderInput("first_name", "First Name", "text", true)}
                 {renderInput("last_name", "Last Name", "text", true)}
@@ -284,15 +294,19 @@ export function RL360PolicyFormDialog({ policy }: Props) {
                 {renderSelect("marital_status", "Marital Status", MARITAL_STATUSES)}
                 {renderSelect("nationality", "Nationality", NATIONALITIES)}
                 {renderSelect("residence_country", "Residence Country", COUNTRIES)}
+                {renderInput("passport_expiry_date", "Passport Expiry Date", "date")}
+
+                {sectionHeader("Policy Info")}
                 {renderInput("policy_number", "Policy No.")}
                 {renderInput("plan_type", "Plan Type")}
                 {renderInput("plan_basis", "Plan Basis")}
                 {renderSelect("currency_of_plan", "Currency Of Plan", CURRENCIES)}
                 {renderInput("premium", "Premium")}
-                {renderInput("passport_expiry_date", "Passport Expiry Date", "date")}
               </div>
 
-              <div className="space-y-3">
+              {/* Right column */}
+              <div className="space-y-4">
+                {sectionHeader("Plan Details")}
                 {renderInput("escalated_premium", "Escalated Premium")}
                 {renderInput("frequency", "Frequency")}
                 {renderInput("vanishing_premium", "Vanishing Premium")}
@@ -302,6 +316,8 @@ export function RL360PolicyFormDialog({ policy }: Props) {
                 {renderInput("plan_term", "Plan Term")}
                 {renderInput("sra", "SRA")}
                 {renderInput("mode_of_payment", "Mode Of Payment")}
+
+                {sectionHeader("Additional")}
                 {renderInput("agent", "Agent")}
                 {renderInput("special_remarks", "Special Remarks")}
                 {renderInput("start_date", "Commencement Date", "date")}
@@ -309,8 +325,8 @@ export function RL360PolicyFormDialog({ policy }: Props) {
               </div>
             </div>
 
-            <div className="mt-4 space-y-1">
-              <Label htmlFor="policy_index" className="text-xs font-medium text-gray-700">
+            <div className="mt-6 space-y-1.5 border-t border-gray-100 pt-4">
+              <Label htmlFor="policy_index" className="text-sm font-medium text-gray-700">
                 Index *
               </Label>
               <Input
@@ -322,7 +338,7 @@ export function RL360PolicyFormDialog({ policy }: Props) {
                 onChange={(e) => set("policy_index", e.target.value)}
                 required
                 placeholder="e.g. 1001"
-                className="h-8 text-sm"
+                className="h-9 max-w-xs"
               />
               <p className="text-xs text-gray-400">
                 Unique number — corresponds to the physical folder for this policy.
