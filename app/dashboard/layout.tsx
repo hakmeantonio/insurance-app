@@ -32,7 +32,7 @@ export default async function DashboardLayout({
             <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">I</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">InsureApp</span>
+            <span className="text-lg font-bold text-gray-900">Insurance</span>
           </div>
         </div>
 
