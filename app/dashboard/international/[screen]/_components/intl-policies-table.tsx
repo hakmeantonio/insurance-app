@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IntlPolicyFormDialog } from "./intl-policy-form-dialog";
+import { RL360PolicyFormDialog } from "./rl360-policy-form-dialog";
 import { DeleteIntlPolicyButton } from "./delete-intl-policy-button";
 import type { IntlPolicy, IntlScreenSlug } from "@/lib/types";
 import { INTL_SCREENS } from "@/lib/types";
@@ -41,21 +42,34 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Index</TableHead>
-            <TableHead>First Name</TableHead>
-            <TableHead>Family Name</TableHead>
-            <TableHead>Date of Birth</TableHead>
-            <TableHead>Start</TableHead>
-            <TableHead>End</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
+          {screen === "rl360" ? (
+            <TableRow>
+              <TableHead>Index</TableHead>
+              <TableHead>First Name</TableHead>
+              <TableHead>Last Name</TableHead>
+              <TableHead>Policy No.</TableHead>
+              <TableHead>Plan Type</TableHead>
+              <TableHead>Commencement</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          ) : (
+            <TableRow>
+              <TableHead>Index</TableHead>
+              <TableHead>First Name</TableHead>
+              <TableHead>Family Name</TableHead>
+              <TableHead>Date of Birth</TableHead>
+              <TableHead>Start</TableHead>
+              <TableHead>End</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          )}
         </TableHeader>
         <TableBody>
           {policies.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={7}
+                colSpan={screen === "rl360" ? 8 : 7}
                 className="text-center py-12 text-gray-400"
               >
                 No policies yet. Add your first policy above.
@@ -64,62 +78,70 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
           ) : (
             policies.map((policy) => {
               const href = folderHref(policy.policy_index);
+              const indexCell = href ? (
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                  title={`Open folder: ${href}`}
+                >
+                  <FolderOpen className="w-3.5 h-3.5" />
+                  {policy.policy_index}
+                </a>
+              ) : (
+                <span className="font-mono font-bold text-gray-800">
+                  {policy.policy_index}
+                </span>
+              );
+              const actions = (
+                <div className="flex items-center justify-end gap-1">
+                  <Link
+                    href={`/dashboard/international/${screen}/${policy.policy_index}`}
+                    className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View
+                  </Link>
+                  {perm.can_update && screen === "rl360" ? (
+                    <RL360PolicyFormDialog policy={policy} />
+                  ) : perm.can_update ? (
+                    <IntlPolicyFormDialog screen={screen} policy={policy} />
+                  ) : null}
+                  {perm.can_delete && (
+                    <DeleteIntlPolicyButton
+                      policyId={policy.id}
+                      policyIndex={policy.policy_index}
+                      screen={screen}
+                    />
+                  )}
+                </div>
+              );
+
+              if (screen === "rl360") {
+                return (
+                  <TableRow key={policy.id}>
+                    <TableCell>{indexCell}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{policy.first_name}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{policy.last_name}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.policy_number ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.plan_type ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{fmt(policy.start_date)}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.policy_status ?? "—"}</TableCell>
+                    <TableCell>{actions}</TableCell>
+                  </TableRow>
+                );
+              }
+
               return (
                 <TableRow key={policy.id}>
-                  <TableCell>
-                    {href ? (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 font-mono font-bold text-blue-600 hover:text-blue-800 hover:underline"
-                        title={`Open folder: ${href}`}
-                      >
-                        <FolderOpen className="w-3.5 h-3.5" />
-                        {policy.policy_index}
-                      </a>
-                    ) : (
-                      <span className="font-mono font-bold text-gray-800">
-                        {policy.policy_index}
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell className="font-medium text-gray-900">
-                    {policy.first_name}
-                  </TableCell>
-                  <TableCell className="font-medium text-gray-900">
-                    {policy.last_name}
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-500">
-                    {fmt(policy.date_of_birth)}
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-500">
-                    {fmt(policy.start_date)}
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-500">
-                    {fmt(policy.end_date)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-1">
-                      <Link
-                        href={`/dashboard/international/${screen}/${policy.policy_index}`}
-                        className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        <Eye className="w-4 h-4" />
-                        View
-                      </Link>
-                      {perm.can_update && (
-                        <IntlPolicyFormDialog screen={screen} policy={policy} />
-                      )}
-                      {perm.can_delete && (
-                        <DeleteIntlPolicyButton
-                          policyId={policy.id}
-                          policyIndex={policy.policy_index}
-                          screen={screen}
-                        />
-                      )}
-                    </div>
-                  </TableCell>
+                  <TableCell>{indexCell}</TableCell>
+                  <TableCell className="font-medium text-gray-900">{policy.first_name}</TableCell>
+                  <TableCell className="font-medium text-gray-900">{policy.last_name}</TableCell>
+                  <TableCell className="text-sm text-gray-500">{fmt(policy.date_of_birth)}</TableCell>
+                  <TableCell className="text-sm text-gray-500">{fmt(policy.start_date)}</TableCell>
+                  <TableCell className="text-sm text-gray-500">{fmt(policy.end_date)}</TableCell>
+                  <TableCell>{actions}</TableCell>
                 </TableRow>
               );
             })

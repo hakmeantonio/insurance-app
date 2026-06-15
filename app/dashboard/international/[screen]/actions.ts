@@ -13,15 +13,39 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  function str(key: string) { return (formData.get(key) as string) || null; }
+
   const payload = {
     screen,
     first_name: formData.get("first_name") as string,
     last_name: formData.get("last_name") as string,
-    date_of_birth: (formData.get("date_of_birth") as string) || null,
-    start_date: (formData.get("start_date") as string) || null,
-    end_date: (formData.get("end_date") as string) || null,
+    date_of_birth: str("date_of_birth"),
+    start_date: str("start_date"),
+    end_date: str("end_date"),
     policy_index: Number(formData.get("policy_index")),
     created_by: user?.id,
+    salutation: str("salutation"),
+    marital_status: str("marital_status"),
+    nationality: str("nationality"),
+    residence_country: str("residence_country"),
+    policy_number: str("policy_number"),
+    plan_type: str("plan_type"),
+    plan_basis: str("plan_basis"),
+    currency_of_plan: str("currency_of_plan"),
+    premium: str("premium"),
+    passport_expiry_date: str("passport_expiry_date"),
+    escalated_premium: str("escalated_premium"),
+    frequency: str("frequency"),
+    vanishing_premium: str("vanishing_premium"),
+    benefits: str("benefits"),
+    escalated_benefits: str("escalated_benefits"),
+    fund_selection: str("fund_selection"),
+    plan_term: str("plan_term"),
+    sra: str("sra"),
+    mode_of_payment: str("mode_of_payment"),
+    agent: str("agent"),
+    special_remarks: str("special_remarks"),
+    policy_status: str("policy_status"),
   };
 
   const { data, error } = await supabase.from("international_policies").insert(payload).select("id").single();
@@ -50,13 +74,37 @@ export async function updateIntlPolicy(
 ) {
   const supabase = await createClient();
 
+  function str(key: string) { return (formData.get(key) as string) || null; }
+
   const payload = {
     first_name: formData.get("first_name") as string,
     last_name: formData.get("last_name") as string,
-    date_of_birth: (formData.get("date_of_birth") as string) || null,
-    start_date: (formData.get("start_date") as string) || null,
-    end_date: (formData.get("end_date") as string) || null,
+    date_of_birth: str("date_of_birth"),
+    start_date: str("start_date"),
+    end_date: str("end_date"),
     policy_index: Number(formData.get("policy_index")),
+    salutation: str("salutation"),
+    marital_status: str("marital_status"),
+    nationality: str("nationality"),
+    residence_country: str("residence_country"),
+    policy_number: str("policy_number"),
+    plan_type: str("plan_type"),
+    plan_basis: str("plan_basis"),
+    currency_of_plan: str("currency_of_plan"),
+    premium: str("premium"),
+    passport_expiry_date: str("passport_expiry_date"),
+    escalated_premium: str("escalated_premium"),
+    frequency: str("frequency"),
+    vanishing_premium: str("vanishing_premium"),
+    benefits: str("benefits"),
+    escalated_benefits: str("escalated_benefits"),
+    fund_selection: str("fund_selection"),
+    plan_term: str("plan_term"),
+    sra: str("sra"),
+    mode_of_payment: str("mode_of_payment"),
+    agent: str("agent"),
+    special_remarks: str("special_remarks"),
+    policy_status: str("policy_status"),
   };
 
   const { error } = await supabase.from("international_policies").update(payload).eq("id", policyId);

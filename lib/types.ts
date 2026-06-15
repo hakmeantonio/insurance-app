@@ -56,6 +56,29 @@ export interface IntlPolicy {
   end_date: string | null;
   policy_index: number;
   created_at: string;
+  // RL360-specific fields
+  salutation: string | null;
+  marital_status: string | null;
+  nationality: string | null;
+  residence_country: string | null;
+  policy_number: string | null;
+  plan_type: string | null;
+  plan_basis: string | null;
+  currency_of_plan: string | null;
+  premium: string | null;
+  passport_expiry_date: string | null;
+  escalated_premium: string | null;
+  frequency: string | null;
+  vanishing_premium: string | null;
+  benefits: string | null;
+  escalated_benefits: string | null;
+  fund_selection: string | null;
+  plan_term: string | null;
+  sra: string | null;
+  mode_of_payment: string | null;
+  agent: string | null;
+  special_remarks: string | null;
+  policy_status: string | null;
 }
 
 export interface IntlPermission {

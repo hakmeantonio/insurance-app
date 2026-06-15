@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { INTL_SCREENS, type IntlScreenSlug, type IntlPolicy } from "@/lib/types";
 import { IntlPoliciesTable } from "./_components/intl-policies-table";
 import { IntlPolicyFormDialog } from "./_components/intl-policy-form-dialog";
+import { RL360PolicyFormDialog } from "./_components/rl360-policy-form-dialog";
 
 export default async function IntlScreenPage({
   params,
@@ -75,7 +76,11 @@ export default async function IntlScreenPage({
           </p>
           <h1 className="text-2xl font-semibold text-gray-900">{screenName}</h1>
         </div>
-        {perm.can_create && <IntlPolicyFormDialog screen={slug} />}
+        {perm.can_create && (
+          slug === "rl360"
+            ? <RL360PolicyFormDialog />
+            : <IntlPolicyFormDialog screen={slug} />
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
