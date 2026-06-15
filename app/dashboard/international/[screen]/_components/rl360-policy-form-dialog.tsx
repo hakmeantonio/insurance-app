@@ -271,7 +271,7 @@ export function RL360PolicyFormDialog({ policy }: Props) {
       {trigger}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-5xl max-h-[92vh] overflow-y-auto p-6">
           <DialogHeader>
             <DialogTitle className="text-xl">{isEdit ? "Edit RL360 Policy" : "New RL360 Policy"}</DialogTitle>
           </DialogHeader>
