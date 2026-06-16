@@ -2,7 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { INTL_SCREENS, type IntlScreenSlug, type IntlPolicy } from "@/lib/types";
+import {
+  INTL_SCREENS,
+  DOCUMENT_CATEGORIES,
+  type IntlScreenSlug,
+  type IntlPolicy,
+} from "@/lib/types";
 import { DocumentGrid } from "./_components/document-grid";
 import { UploadFiles } from "./_components/upload-files";
 
@@ -52,30 +57,48 @@ export default async function PolicyDocumentsPage({
   const canEdit = perm.can_create || perm.can_update || perm.can_delete;
   const screenName = INTL_SCREENS[slug];
   const intlPolicy = policy as IntlPolicy;
-  const storagePath = `${slug}/${policyIndex}`;
 
-  // List files and generate signed URLs
-  const { data: files } = await supabase.storage
-    .from("policy-documents")
-    .list(storagePath, { sortBy: { column: "name", order: "asc" } });
+  // List files for each category subfolder
+  const categoryListResults = await Promise.all(
+    DOCUMENT_CATEGORIES.map(async (cat) => {
+      const { data } = await supabase.storage
+        .from("policy-documents")
+        .list(`${slug}/${policyIndex}/${cat}`, { sortBy: { column: "name", order: "asc" } });
+      const files = (data ?? []).filter((f) => f.name !== ".emptyFolderPlaceholder");
+      return { category: cat, files };
+    })
+  );
 
-  const realFiles = (files ?? []).filter((f) => f.name !== ".emptyFolderPlaceholder");
+  // Batch-generate signed URLs for all files across all categories
+  const allFileMeta = categoryListResults.flatMap(({ category, files }) =>
+    files.map((f) => ({
+      category,
+      name: f.name,
+      size: f.metadata?.size ?? 0,
+      path: `${slug}/${policyIndex}/${category}/${f.name}`,
+    }))
+  );
 
-  let fileList: { name: string; signedUrl: string; size: number }[] = [];
-  if (realFiles.length > 0) {
-    const paths = realFiles.map((f) => `${storagePath}/${f.name}`);
+  let signedUrls: (string | null)[] = allFileMeta.map(() => null);
+  if (allFileMeta.length > 0) {
     const { data: signed } = await supabase.storage
       .from("policy-documents")
-      .createSignedUrls(paths, 3600);
-
-    fileList = (signed ?? [])
-      .filter((s) => s.signedUrl != null)
-      .map((s, i) => ({
-        name: realFiles[i].name,
-        signedUrl: s.signedUrl as string,
-        size: realFiles[i].metadata?.size ?? 0,
-      }));
+      .createSignedUrls(allFileMeta.map((f) => f.path), 3600);
+    signedUrls = (signed ?? []).map((s) => s.signedUrl ?? null);
   }
+
+  // Rebuild per-category file lists with signed URLs
+  let urlIdx = 0;
+  const categoryFiles = categoryListResults.map(({ category, files }) => ({
+    category,
+    files: files.map((f) => ({
+      name: f.name,
+      signedUrl: signedUrls[urlIdx++] ?? "",
+      size: allFileMeta[urlIdx - 1]?.size ?? 0,
+    })),
+  }));
+
+  const totalFiles = allFileMeta.length;
 
   return (
     <div>
@@ -97,17 +120,15 @@ export default async function PolicyDocumentsPage({
               {intlPolicy.first_name} {intlPolicy.last_name}
             </h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              {fileList.length} file{fileList.length !== 1 ? "s" : ""}
+              {totalFiles} file{totalFiles !== 1 ? "s" : ""}
             </p>
           </div>
-          {canEdit && (
-            <UploadFiles screen={slug} policyIndex={policyIndex} />
-          )}
+          {canEdit && <UploadFiles screen={slug} policyIndex={policyIndex} />}
         </div>
       </div>
 
       <DocumentGrid
-        files={fileList}
+        categoryFiles={categoryFiles}
         screen={slug}
         policyIndex={policyIndex}
         canEdit={canEdit}

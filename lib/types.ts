@@ -81,6 +81,19 @@ export interface IntlPolicy {
   policy_status: string | null;
 }
 
+export const DOCUMENT_CATEGORIES = [
+  "APPLICATION",
+  "BENEFICIARY-FORM",
+  "CREDIT-CARD",
+  "EDD",
+  "ID-VORA",
+  "ILLUSTRATION",
+  "MISCELLANEOUS",
+  "POLICY-DOCUMENTS",
+] as const;
+
+export type DocumentCategory = (typeof DOCUMENT_CATEGORIES)[number];
+
 export interface IntlPermission {
   screen: IntlScreenSlug;
   can_read: boolean;

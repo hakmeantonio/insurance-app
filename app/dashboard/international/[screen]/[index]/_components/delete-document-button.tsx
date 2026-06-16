@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,15 +13,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { deleteDocument } from "../actions";
-import type { IntlScreenSlug } from "@/lib/types";
+import type { DocumentCategory, IntlScreenSlug } from "@/lib/types";
 
 export function DeleteDocumentButton({
   screen,
   policyIndex,
+  category,
   filename,
 }: {
   screen: IntlScreenSlug;
   policyIndex: number;
+  category: DocumentCategory;
   filename: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ export function DeleteDocumentButton({
 
   async function handleDelete() {
     setLoading(true);
-    const result = await deleteDocument(screen, policyIndex, filename);
+    const result = await deleteDocument(screen, policyIndex, category, filename);
     setLoading(false);
     if (result.error) {
       setError(result.error);
