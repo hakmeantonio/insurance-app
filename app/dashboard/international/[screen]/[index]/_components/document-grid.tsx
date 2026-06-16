@@ -10,7 +10,7 @@ type FileType = "image" | "pdf" | "word" | "excel" | "other";
 
 function getFileType(name: string): FileType {
   const ext = name.split(".").pop()?.toLowerCase() ?? "";
-  if (["jpg", "jpeg", "png", "gif", "webp", "bmp"].includes(ext)) return "image";
+  if (["jpg", "jpeg", "png", "gif", "webp", "bmp", "tif", "tiff"].includes(ext)) return "image";
   if (ext === "pdf") return "pdf";
   if (["doc", "docx"].includes(ext)) return "word";
   if (["xls", "xlsx"].includes(ext)) return "excel";
