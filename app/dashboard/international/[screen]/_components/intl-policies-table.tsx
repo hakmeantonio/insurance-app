@@ -101,7 +101,7 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
                     className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
                   >
                     <Eye className="w-4 h-4" />
-                    View
+                    View Images
                   </Link>
                   {perm.can_update && screen === "rl360" ? (
                     <RL360PolicyFormDialog policy={policy} />
