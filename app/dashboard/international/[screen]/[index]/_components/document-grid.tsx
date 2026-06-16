@@ -6,11 +6,12 @@ import { cn } from "@/lib/utils";
 import { DeleteDocumentButton } from "./delete-document-button";
 import { DOCUMENT_CATEGORIES, type DocumentCategory, type IntlScreenSlug } from "@/lib/types";
 
-type FileType = "image" | "pdf" | "word" | "excel" | "other";
+type FileType = "image" | "tif" | "pdf" | "word" | "excel" | "other";
 
 function getFileType(name: string): FileType {
   const ext = name.split(".").pop()?.toLowerCase() ?? "";
-  if (["jpg", "jpeg", "png", "gif", "webp", "bmp", "tif", "tiff"].includes(ext)) return "image";
+  if (["jpg", "jpeg", "png", "gif", "webp", "bmp"].includes(ext)) return "image";
+  if (["tif", "tiff"].includes(ext)) return "tif";
   if (ext === "pdf") return "pdf";
   if (["doc", "docx"].includes(ext)) return "word";
   if (["xls", "xlsx"].includes(ext)) return "excel";
@@ -48,6 +49,12 @@ function DocIcon({ type, className }: { type: FileType; className?: string }) {
   if (type === "pdf") return <FileText className={cn(cls, "text-red-400")} />;
   if (type === "word") return <FileText className={cn(cls, "text-blue-500")} />;
   if (type === "excel") return <FileSpreadsheet className={cn(cls, "text-green-600")} />;
+  if (type === "tif") return (
+    <div className={cn("flex flex-col items-center justify-center", className)}>
+      <File className="text-violet-400 w-full h-full max-w-[2.5rem] max-h-[2.5rem]" />
+      <span className="text-[10px] font-bold text-violet-400 mt-0.5 tracking-widest">TIF</span>
+    </div>
+  );
   return <File className={cn(cls, "text-gray-400")} />;
 }
 
@@ -177,6 +184,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
                         <DocIcon type={type} className="w-10 h-10" />
                       )}
                     </div>
+
                     {/* Info */}
                     <div className="px-2.5 py-2 bg-white">
                       <p
@@ -242,6 +250,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
                   <DocIcon type={type} className="w-16 h-16" />
                   <p className="text-xs text-gray-400 mt-2">
                     {type === "pdf" ? "PDF Document"
+                      : type === "tif" ? "TIFF Image"
                       : type === "word" ? "Word Document"
                       : type === "excel" ? "Excel Spreadsheet"
                       : "File"}
@@ -266,8 +275,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
             </div>
 
             <div className="flex flex-col gap-2">
-              {(getFileType(preview.name) === "image" ||
-                getFileType(preview.name) === "pdf") && (
+              {(["image", "tif", "pdf"] as FileType[]).includes(getFileType(preview.name)) && (
                 <a
                   href={preview.signedUrl}
                   target="_blank"
