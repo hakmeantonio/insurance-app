@@ -129,7 +129,6 @@ const empty = {
   special_remarks: "",
   start_date: "",
   policy_status: "",
-  policy_index: "",
 };
 
 type Fields = typeof empty;
@@ -162,7 +161,6 @@ function policyToFields(p: IntlPolicy): Fields {
     special_remarks: p.special_remarks ?? "",
     start_date: p.start_date ?? "",
     policy_status: p.policy_status ?? "",
-    policy_index: String(p.policy_index),
   };
 }
 
@@ -185,10 +183,6 @@ export function RL360PolicyFormDialog({ policy }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!fields.policy_index || isNaN(Number(fields.policy_index))) {
-      setError("Index must be a valid number.");
-      return;
-    }
     setLoading(true);
     setError(null);
 
@@ -325,25 +319,13 @@ export function RL360PolicyFormDialog({ policy }: Props) {
               </div>
             </div>
 
-            <div className="mt-6 space-y-1.5 border-t border-gray-100 pt-4">
-              <Label htmlFor="policy_index" className="text-sm font-medium text-gray-700">
-                Index *
-              </Label>
-              <Input
-                id="policy_index"
-                type="number"
-                min="1"
-                step="1"
-                value={fields.policy_index}
-                onChange={(e) => set("policy_index", e.target.value)}
-                required
-                placeholder="e.g. 1001"
-                className="h-9 max-w-xs"
-              />
-              <p className="text-xs text-gray-400">
-                Unique number — corresponds to the physical folder for this policy.
-              </p>
-            </div>
+            {isEdit && (
+              <div className="mt-2 border-t border-gray-100 pt-4 flex items-center gap-2 text-sm text-gray-500">
+                <span>Index:</span>
+                <span className="font-mono font-bold text-gray-800">{policy.policy_index}</span>
+                <span className="text-xs text-gray-400">(auto-assigned, cannot be changed)</span>
+              </div>
+            )}
 
             <DialogFooter className="pt-4">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>

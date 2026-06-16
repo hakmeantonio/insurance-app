@@ -2,11 +2,38 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logAudit } from "@/lib/audit";
-import type { IntlScreenSlug } from "@/lib/types";
+import { DOCUMENT_CATEGORIES, type IntlScreenSlug } from "@/lib/types";
 
 function revalidate(screen: IntlScreenSlug) {
   revalidatePath(`/dashboard/international/${screen}`);
+}
+
+async function getNextPolicyIndex(screen: IntlScreenSlug): Promise<number> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("international_policies")
+    .select("policy_index")
+    .eq("screen", screen)
+    .order("policy_index", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data?.policy_index ?? 0) + 1;
+}
+
+async function createStorageFolders(screen: IntlScreenSlug, policyIndex: number) {
+  const admin = createAdminClient();
+  const placeholder = Buffer.alloc(0);
+  await Promise.all(
+    DOCUMENT_CATEGORIES.map((cat) =>
+      admin.storage
+        .from("policy-documents")
+        .upload(`${screen}/${policyIndex}/${cat}/.emptyFolderPlaceholder`, placeholder, {
+          upsert: false,
+        })
+    )
+  );
 }
 
 export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormData) {
@@ -15,6 +42,8 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
 
   function str(key: string) { return (formData.get(key) as string) || null; }
 
+  const policyIndex = await getNextPolicyIndex(screen);
+
   const payload = {
     screen,
     first_name: formData.get("first_name") as string,
@@ -22,7 +51,7 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
     date_of_birth: str("date_of_birth"),
     start_date: str("start_date"),
     end_date: str("end_date"),
-    policy_index: Number(formData.get("policy_index")),
+    policy_index: policyIndex,
     created_by: user?.id,
     salutation: str("salutation"),
     marital_status: str("marital_status"),
@@ -48,19 +77,22 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
     policy_status: str("policy_status"),
   };
 
-  const { data, error } = await supabase.from("international_policies").insert(payload).select("id").single();
+  const { data, error } = await supabase
+    .from("international_policies")
+    .insert(payload)
+    .select("id")
+    .single();
 
-  if (error) {
-    if (error.code === "23505") return { error: "That index number is already in use." };
-    return { error: error.message };
-  }
+  if (error) return { error: error.message };
+
+  await createStorageFolders(screen, policyIndex);
 
   await logAudit({
     action: "create",
     entityType: "international_policy",
     entityId: data?.id,
     screen,
-    details: { first_name: payload.first_name, last_name: payload.last_name, policy_index: payload.policy_index },
+    details: { first_name: payload.first_name, last_name: payload.last_name, policy_index: policyIndex },
   });
 
   revalidate(screen);
@@ -82,7 +114,6 @@ export async function updateIntlPolicy(
     date_of_birth: str("date_of_birth"),
     start_date: str("start_date"),
     end_date: str("end_date"),
-    policy_index: Number(formData.get("policy_index")),
     salutation: str("salutation"),
     marital_status: str("marital_status"),
     nationality: str("nationality"),
@@ -107,19 +138,19 @@ export async function updateIntlPolicy(
     policy_status: str("policy_status"),
   };
 
-  const { error } = await supabase.from("international_policies").update(payload).eq("id", policyId);
+  const { error } = await supabase
+    .from("international_policies")
+    .update(payload)
+    .eq("id", policyId);
 
-  if (error) {
-    if (error.code === "23505") return { error: "That index number is already in use." };
-    return { error: error.message };
-  }
+  if (error) return { error: error.message };
 
   await logAudit({
     action: "update",
     entityType: "international_policy",
     entityId: policyId,
     screen,
-    details: { first_name: payload.first_name, last_name: payload.last_name, policy_index: payload.policy_index },
+    details: { first_name: payload.first_name, last_name: payload.last_name },
   });
 
   revalidate(screen);

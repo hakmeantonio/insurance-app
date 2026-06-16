@@ -26,7 +26,6 @@ const empty = {
   date_of_birth: "",
   start_date: "",
   end_date: "",
-  policy_index: "",
 };
 
 function policyToFields(p: IntlPolicy) {
@@ -36,7 +35,6 @@ function policyToFields(p: IntlPolicy) {
     date_of_birth: p.date_of_birth ?? "",
     start_date: p.start_date ?? "",
     end_date: p.end_date ?? "",
-    policy_index: String(p.policy_index),
   };
 }
 
@@ -59,10 +57,6 @@ export function IntlPolicyFormDialog({ screen, policy }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!fields.policy_index || isNaN(Number(fields.policy_index))) {
-      setError("Index must be a valid number.");
-      return;
-    }
     setLoading(true);
     setError(null);
 
@@ -163,22 +157,13 @@ export function IntlPolicyFormDialog({ screen, policy }: Props) {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="policy_index">Index *</Label>
-              <Input
-                id="policy_index"
-                type="number"
-                min="1"
-                step="1"
-                value={fields.policy_index}
-                onChange={(e) => set("policy_index", e.target.value)}
-                required
-                placeholder="e.g. 1001"
-              />
-              <p className="text-xs text-gray-400">
-                Unique number — corresponds to the physical folder for this policy.
-              </p>
-            </div>
+            {isEdit && (
+              <div className="flex items-center gap-2 text-sm text-gray-500 border-t border-gray-100 pt-2">
+                <span>Index:</span>
+                <span className="font-mono font-bold text-gray-800">{policy.policy_index}</span>
+                <span className="text-xs text-gray-400">(auto-assigned, cannot be changed)</span>
+              </div>
+            )}
 
             <DialogFooter className="pt-2">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
