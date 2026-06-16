@@ -82,6 +82,7 @@ export interface IntlPolicy {
 }
 
 export const DOCUMENT_CATEGORIES = [
+  "ALL",
   "APPLICATION",
   "BENEFICIARY-FORM",
   "CREDIT-CARD",

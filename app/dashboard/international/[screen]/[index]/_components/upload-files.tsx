@@ -59,7 +59,7 @@ export function UploadFiles({
           className="h-9 rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={uploading}
         >
-          {DOCUMENT_CATEGORIES.map((cat) => (
+          {DOCUMENT_CATEGORIES.filter((cat) => cat !== "ALL").map((cat) => (
             <option key={cat} value={cat}>
               {cat}
             </option>

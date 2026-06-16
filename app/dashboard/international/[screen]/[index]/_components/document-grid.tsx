@@ -103,7 +103,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
             </span>
           </button>
 
-          {DOCUMENT_CATEGORIES.map((cat) => {
+          {DOCUMENT_CATEGORIES.filter((cat) => cat !== "ALL").map((cat) => {
             const count = categoryFiles.find((cf) => cf.category === cat)?.files.length ?? 0;
             return (
               <button
