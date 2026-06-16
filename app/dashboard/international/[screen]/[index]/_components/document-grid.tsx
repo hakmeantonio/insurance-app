@@ -8,6 +8,15 @@ import { DOCUMENT_CATEGORIES, type DocumentCategory, type IntlScreenSlug } from 
 
 type FileType = "image" | "pdf" | "word" | "excel" | "other";
 
+function isTif(name: string) {
+  const ext = name.split(".").pop()?.toLowerCase() ?? "";
+  return ext === "tif" || ext === "tiff";
+}
+
+function tifSrc(signedUrl: string) {
+  return `/api/tif-preview?url=${encodeURIComponent(signedUrl)}`;
+}
+
 function getFileType(name: string): FileType {
   const ext = name.split(".").pop()?.toLowerCase() ?? "";
   if (["jpg", "jpeg", "png", "gif", "webp", "bmp", "tif", "tiff"].includes(ext)) return "image";
@@ -169,7 +178,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
                       {type === "image" ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={file.signedUrl}
+                          src={isTif(file.name) ? tifSrc(file.signedUrl) : file.signedUrl}
                           alt={file.name}
                           className="w-full h-full object-cover"
                         />
@@ -232,7 +241,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
                 return (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={preview.signedUrl}
+                    src={isTif(preview.name) ? tifSrc(preview.signedUrl) : preview.signedUrl}
                     alt={preview.name}
                     className="max-w-full max-h-64 object-contain"
                   />
