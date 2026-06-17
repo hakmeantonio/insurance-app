@@ -98,6 +98,13 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
     smoker_status: str("smoker_status"),
     additional_protection: str("additional_protection"),
     investment_details: str("investment_details"),
+    company: str("company"),
+    address1: str("address1"),
+    city: str("city"),
+    salary: str("salary"),
+    cover: str("cover"),
+    net_premium: str("net_premium"),
+    gross_premium: str("gross_premium"),
   };
 
   const { data, error } = await supabase
@@ -182,6 +189,13 @@ export async function updateIntlPolicy(
     smoker_status: str("smoker_status"),
     additional_protection: str("additional_protection"),
     investment_details: str("investment_details"),
+    company: str("company"),
+    address1: str("address1"),
+    city: str("city"),
+    salary: str("salary"),
+    cover: str("cover"),
+    net_premium: str("net_premium"),
+    gross_premium: str("gross_premium"),
   };
 
   const { error } = await supabase

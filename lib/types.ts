@@ -95,6 +95,14 @@ export interface IntlPolicy {
   dependant_6: string | null;
   dependant_7: string | null;
   renewal_date: string | null;
+  // Omnilife-specific fields
+  company: string | null;
+  address1: string | null;
+  city: string | null;
+  salary: string | null;
+  cover: string | null;
+  net_premium: string | null;
+  gross_premium: string | null;
   // Friends Provident-specific fields
   selected_retirement_age: string | null;
   regular_contribution: string | null;

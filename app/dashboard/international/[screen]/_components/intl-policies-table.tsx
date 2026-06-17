@@ -14,6 +14,7 @@ import { IntlPolicyFormDialog } from "./intl-policy-form-dialog";
 import { RL360PolicyFormDialog } from "./rl360-policy-form-dialog";
 import { ExpacarePolicyFormDialog } from "./expacare-policy-form-dialog";
 import { FriendsPolicyFormDialog } from "./friends-provident-policy-form-dialog";
+import { OmnilifePolicyFormDialog } from "./omnilife-policy-form-dialog";
 import { DeleteIntlPolicyButton } from "./delete-intl-policy-button";
 import type { IntlPolicy, IntlScreenSlug } from "@/lib/types";
 import { INTL_SCREENS } from "@/lib/types";
@@ -76,6 +77,17 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
+          ) : screen === "omnilife" ? (
+            <TableRow>
+              <TableHead>Index</TableHead>
+              <TableHead>First Name</TableHead>
+              <TableHead>Last Name</TableHead>
+              <TableHead>Policy No.</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead>Inception Date</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
           ) : (
             <TableRow>
               <TableHead>Index</TableHead>
@@ -92,7 +104,7 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
           {policies.length === 0 ? (
             <TableRow>
               <TableCell
-                colSpan={screen === "rl360" || screen === "friends-provident" ? 8 : 7}
+                colSpan={screen === "rl360" || screen === "friends-provident" || screen === "omnilife" ? 8 : 7}
                 className="text-center py-12 text-gray-400"
               >
                 No policies yet. Add your first policy above.
@@ -132,6 +144,8 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
                     <ExpacarePolicyFormDialog policy={policy} />
                   ) : perm.can_update && screen === "friends-provident" ? (
                     <FriendsPolicyFormDialog policy={policy} />
+                  ) : perm.can_update && screen === "omnilife" ? (
+                    <OmnilifePolicyFormDialog policy={policy} />
                   ) : perm.can_update ? (
                     <IntlPolicyFormDialog screen={screen} policy={policy} />
                   ) : null}
@@ -167,6 +181,21 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
                     <TableCell className="font-medium text-gray-900">{policy.first_name}</TableCell>
                     <TableCell className="font-medium text-gray-900">{policy.last_name}</TableCell>
                     <TableCell className="text-sm text-gray-500">{policy.policy_number ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{fmt(policy.start_date)}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.policy_status ?? "—"}</TableCell>
+                    <TableCell>{actions}</TableCell>
+                  </TableRow>
+                );
+              }
+
+              if (screen === "omnilife") {
+                return (
+                  <TableRow key={policy.id}>
+                    <TableCell>{indexCell}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{policy.first_name}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{policy.last_name}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.policy_number ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.company ?? "—"}</TableCell>
                     <TableCell className="text-sm text-gray-500">{fmt(policy.start_date)}</TableCell>
                     <TableCell className="text-sm text-gray-500">{policy.policy_status ?? "—"}</TableCell>
                     <TableCell>{actions}</TableCell>
