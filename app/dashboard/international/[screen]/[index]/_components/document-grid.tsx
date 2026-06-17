@@ -220,7 +220,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
 
       {/* ── Right preview panel ── */}
       {preview && (
-        <div className="w-72 flex-shrink-0 border-l border-gray-100 flex flex-col bg-white">
+        <div className="w-[54rem] flex-shrink-0 border-l border-gray-100 flex flex-col bg-white">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Preview
@@ -234,7 +234,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
           </div>
 
           {/* Preview area */}
-          <div className="border-b border-gray-100 bg-gray-50 flex items-center justify-center overflow-hidden" style={{ minHeight: 220 }}>
+          <div className="border-b border-gray-100 bg-gray-50 flex items-center justify-center overflow-hidden" style={{ minHeight: 660 }}>
             {(() => {
               const type = getFileType(preview.name);
               if (type === "image") {
@@ -243,7 +243,7 @@ export function DocumentGrid({ categoryFiles, screen, policyIndex, canEdit }: Pr
                   <img
                     src={isTif(preview.name) ? tifSrc(preview.signedUrl) : preview.signedUrl}
                     alt={preview.name}
-                    className="max-w-full max-h-64 object-contain"
+                    className="max-w-full max-h-[48rem] object-contain"
                   />
                 );
               }
