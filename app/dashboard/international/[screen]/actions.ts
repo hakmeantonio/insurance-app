@@ -90,6 +90,14 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
     dependant_6: str("dependant_6"),
     dependant_7: str("dependant_7"),
     renewal_date: str("renewal_date"),
+    selected_retirement_age: str("selected_retirement_age"),
+    regular_contribution: str("regular_contribution"),
+    single_contribution: str("single_contribution"),
+    contribution_term: str("contribution_term"),
+    contribution_escalation: str("contribution_escalation"),
+    smoker_status: str("smoker_status"),
+    additional_protection: str("additional_protection"),
+    investment_details: str("investment_details"),
   };
 
   const { data, error } = await supabase
@@ -166,6 +174,14 @@ export async function updateIntlPolicy(
     dependant_6: str("dependant_6"),
     dependant_7: str("dependant_7"),
     renewal_date: str("renewal_date"),
+    selected_retirement_age: str("selected_retirement_age"),
+    regular_contribution: str("regular_contribution"),
+    single_contribution: str("single_contribution"),
+    contribution_term: str("contribution_term"),
+    contribution_escalation: str("contribution_escalation"),
+    smoker_status: str("smoker_status"),
+    additional_protection: str("additional_protection"),
+    investment_details: str("investment_details"),
   };
 
   const { error } = await supabase

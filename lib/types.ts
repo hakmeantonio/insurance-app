@@ -95,6 +95,15 @@ export interface IntlPolicy {
   dependant_6: string | null;
   dependant_7: string | null;
   renewal_date: string | null;
+  // Friends Provident-specific fields
+  selected_retirement_age: string | null;
+  regular_contribution: string | null;
+  single_contribution: string | null;
+  contribution_term: string | null;
+  contribution_escalation: string | null;
+  smoker_status: string | null;
+  additional_protection: string | null;
+  investment_details: string | null;
 }
 
 export const DOCUMENT_CATEGORIES = [
