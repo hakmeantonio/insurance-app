@@ -75,6 +75,21 @@ export async function createIntlPolicy(screen: IntlScreenSlug, formData: FormDat
     agent: str("agent"),
     special_remarks: str("special_remarks"),
     policy_status: str("policy_status"),
+    group_name: str("group_name"),
+    area: str("area"),
+    plan_options: str("plan_options"),
+    original_database: str("original_database"),
+    wife_husband: str("wife_husband"),
+    spouse_dob: str("spouse_dob"),
+    spouse_certificate_number: str("spouse_certificate_number"),
+    dependant_1: str("dependant_1"),
+    dependant_2: str("dependant_2"),
+    dependant_3: str("dependant_3"),
+    dependant_4: str("dependant_4"),
+    dependant_5: str("dependant_5"),
+    dependant_6: str("dependant_6"),
+    dependant_7: str("dependant_7"),
+    renewal_date: str("renewal_date"),
   };
 
   const { data, error } = await supabase
@@ -136,6 +151,21 @@ export async function updateIntlPolicy(
     agent: str("agent"),
     special_remarks: str("special_remarks"),
     policy_status: str("policy_status"),
+    group_name: str("group_name"),
+    area: str("area"),
+    plan_options: str("plan_options"),
+    original_database: str("original_database"),
+    wife_husband: str("wife_husband"),
+    spouse_dob: str("spouse_dob"),
+    spouse_certificate_number: str("spouse_certificate_number"),
+    dependant_1: str("dependant_1"),
+    dependant_2: str("dependant_2"),
+    dependant_3: str("dependant_3"),
+    dependant_4: str("dependant_4"),
+    dependant_5: str("dependant_5"),
+    dependant_6: str("dependant_6"),
+    dependant_7: str("dependant_7"),
+    renewal_date: str("renewal_date"),
   };
 
   const { error } = await supabase

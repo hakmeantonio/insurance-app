@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const buffer = Buffer.from(await res.arrayBuffer());
     const jpeg = await sharp(buffer).jpeg({ quality: 85 }).toBuffer();
 
-    return new NextResponse(jpeg, {
+    return new NextResponse(new Uint8Array(jpeg), {
       headers: {
         "Content-Type": "image/jpeg",
         "Cache-Control": "public, max-age=3600",

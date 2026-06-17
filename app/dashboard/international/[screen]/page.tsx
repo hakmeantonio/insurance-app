@@ -5,6 +5,7 @@ import { INTL_SCREENS, type IntlScreenSlug, type IntlPolicy } from "@/lib/types"
 import { IntlPoliciesTable } from "./_components/intl-policies-table";
 import { IntlPolicyFormDialog } from "./_components/intl-policy-form-dialog";
 import { RL360PolicyFormDialog } from "./_components/rl360-policy-form-dialog";
+import { ExpacarePolicyFormDialog } from "./_components/expacare-policy-form-dialog";
 
 export default async function IntlScreenPage({
   params,
@@ -79,6 +80,8 @@ export default async function IntlScreenPage({
         {perm.can_create && (
           slug === "rl360"
             ? <RL360PolicyFormDialog />
+            : slug === "expacare"
+            ? <ExpacarePolicyFormDialog />
             : <IntlPolicyFormDialog screen={slug} />
         )}
       </div>

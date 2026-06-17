@@ -31,7 +31,7 @@ const CURRENCIES = [
   "OMR", "JOD", "EGP", "CAD", "AUD", "JPY", "CNY", "INR", "SGD", "HKD",
 ];
 
-const COUNTRIES = [
+export const COUNTRIES = [
   "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
   "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain",
   "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
@@ -65,7 +65,7 @@ const COUNTRIES = [
   "Yemen", "Zambia", "Zimbabwe",
 ];
 
-const NATIONALITIES = [
+export const NATIONALITIES = [
   "Afghan", "Albanian", "Algerian", "Andorran", "Angolan", "Antiguan", "Argentine",
   "Armenian", "Australian", "Austrian", "Azerbaijani", "Bahamian", "Bahraini",
   "Bangladeshi", "Barbadian", "Belarusian", "Belgian", "Belizean", "Beninese",

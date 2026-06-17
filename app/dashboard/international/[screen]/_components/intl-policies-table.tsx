@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { IntlPolicyFormDialog } from "./intl-policy-form-dialog";
 import { RL360PolicyFormDialog } from "./rl360-policy-form-dialog";
+import { ExpacarePolicyFormDialog } from "./expacare-policy-form-dialog";
 import { DeleteIntlPolicyButton } from "./delete-intl-policy-button";
 import type { IntlPolicy, IntlScreenSlug } from "@/lib/types";
 import { INTL_SCREENS } from "@/lib/types";
@@ -50,6 +51,16 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
               <TableHead>Policy No.</TableHead>
               <TableHead>Plan Type</TableHead>
               <TableHead>Commencement</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          ) : screen === "expacare" ? (
+            <TableRow>
+              <TableHead>Index</TableHead>
+              <TableHead>First Name</TableHead>
+              <TableHead>Last Name</TableHead>
+              <TableHead>Certificate No.</TableHead>
+              <TableHead>Inception Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -105,6 +116,8 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
                   </Link>
                   {perm.can_update && screen === "rl360" ? (
                     <RL360PolicyFormDialog policy={policy} />
+                  ) : perm.can_update && screen === "expacare" ? (
+                    <ExpacarePolicyFormDialog policy={policy} />
                   ) : perm.can_update ? (
                     <IntlPolicyFormDialog screen={screen} policy={policy} />
                   ) : null}
@@ -126,6 +139,20 @@ export function IntlPoliciesTable({ policies, screen, canEdit, perm }: Props) {
                     <TableCell className="font-medium text-gray-900">{policy.last_name}</TableCell>
                     <TableCell className="text-sm text-gray-500">{policy.policy_number ?? "—"}</TableCell>
                     <TableCell className="text-sm text-gray-500">{policy.plan_type ?? "—"}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{fmt(policy.start_date)}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.policy_status ?? "—"}</TableCell>
+                    <TableCell>{actions}</TableCell>
+                  </TableRow>
+                );
+              }
+
+              if (screen === "expacare") {
+                return (
+                  <TableRow key={policy.id}>
+                    <TableCell>{indexCell}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{policy.first_name}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{policy.last_name}</TableCell>
+                    <TableCell className="text-sm text-gray-500">{policy.policy_number ?? "—"}</TableCell>
                     <TableCell className="text-sm text-gray-500">{fmt(policy.start_date)}</TableCell>
                     <TableCell className="text-sm text-gray-500">{policy.policy_status ?? "—"}</TableCell>
                     <TableCell>{actions}</TableCell>

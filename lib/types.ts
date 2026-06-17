@@ -79,6 +79,22 @@ export interface IntlPolicy {
   agent: string | null;
   special_remarks: string | null;
   policy_status: string | null;
+  // Expacare-specific fields
+  group_name: string | null;
+  area: string | null;
+  plan_options: string | null;
+  original_database: string | null;
+  wife_husband: string | null;
+  spouse_dob: string | null;
+  spouse_certificate_number: string | null;
+  dependant_1: string | null;
+  dependant_2: string | null;
+  dependant_3: string | null;
+  dependant_4: string | null;
+  dependant_5: string | null;
+  dependant_6: string | null;
+  dependant_7: string | null;
+  renewal_date: string | null;
 }
 
 export const DOCUMENT_CATEGORIES = [
