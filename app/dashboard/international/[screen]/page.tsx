@@ -8,6 +8,7 @@ import { RL360PolicyFormDialog } from "./_components/rl360-policy-form-dialog";
 import { ExpacarePolicyFormDialog } from "./_components/expacare-policy-form-dialog";
 import { FriendsPolicyFormDialog } from "./_components/friends-provident-policy-form-dialog";
 import { OmnilifePolicyFormDialog } from "./_components/omnilife-policy-form-dialog";
+import { ScottishProvidentPolicyFormDialog } from "./_components/scottish-provident-policy-form-dialog";
 
 export default async function IntlScreenPage({
   params,
@@ -88,6 +89,8 @@ export default async function IntlScreenPage({
             ? <FriendsPolicyFormDialog />
             : slug === "omnilife"
             ? <OmnilifePolicyFormDialog />
+            : slug === "scottish-provident"
+            ? <ScottishProvidentPolicyFormDialog />
             : <IntlPolicyFormDialog screen={slug} />
         )}
       </div>

@@ -41,6 +41,7 @@ export const INTL_SCREENS = {
   "omnilife": "Omnilife",
   "friends-provident": "Friends Provident",
   "expacare": "Expacare",
+  "scottish-provident": "Scottish Provident",
   "claims": "Claims",
 } as const;
 
